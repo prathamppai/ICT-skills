@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import './App.css'
 
 // Import all images
@@ -137,7 +137,7 @@ const baseSlides = [
     title: 'ICT Tools You Already Use',
     subtitle: 'The essential toolkit',
     type: 'tools',
-    image: null, // No background image for tools slide
+    image: null,
     tools: [
       { name: 'Smartphone', desc: 'Calls, apps, internet, GPS, camera' },
       { name: 'Tablet', desc: 'Reading, drawing, presentations, media' },
@@ -198,7 +198,7 @@ const baseSlides = [
     title: 'CPU — The Brain',
     subtitle: 'Control Unit • ALU • Memory Unit',
     type: 'content',
-    image: ipoCycleImg, // Same image as slide 12
+    image: ipoCycleImg,
     bullets: [
       'Control Unit (CU) — Directs traffic, fetches instructions',
       'Arithmetic Logic Unit (ALU) — Math + logic (add, compare, AND/OR)',
@@ -283,7 +283,7 @@ const baseSlides = [
     title: 'Recap — 5 Takeaways',
     subtitle: 'What to remember from Chapter 3',
     type: 'recap',
-    image: heroImg, // Same image as slide 1
+    image: heroImg,
     takeaways: [
       'ICT = Info + Comm + Tech — powers every sector',
       'Smartphone = Computer in your pocket (IPO cycle applies)',
@@ -295,8 +295,7 @@ const baseSlides = [
   }
 ]
 
-// Build presentation steps: each slide becomes 2 steps (image, then content)
-// except consecutive slides with same image share the image step
+// Build presentation steps
 function buildSteps(slides) {
   const steps = []
   let lastImage = null
@@ -305,7 +304,6 @@ function buildSteps(slides) {
     const sameImageAsLast = slide.image && slide.image === lastImage
 
     if (!sameImageAsLast && slide.image) {
-      // Image step (full-screen image, minimal text)
       steps.push({
         ...slide,
         phase: 'image',
@@ -314,11 +312,9 @@ function buildSteps(slides) {
       })
       lastImage = slide.image
     } else if (!slide.image) {
-      // No image slide (like tools) - just go straight to content
       lastImage = null
     }
 
-    // Content step (image stays, text appears)
     steps.push({
       ...slide,
       phase: 'content',
@@ -333,12 +329,30 @@ function buildSteps(slides) {
 
 const presentationSteps = buildSteps(baseSlides)
 
+// Transition phases
+const TRANSITION_PHASES = {
+  IDLE: 'idle',
+  CONTENT_OUT: 'content-out',
+  IMAGE_OUT: 'image-out',
+  IMAGE_IN: 'image-in',
+  CONTENT_IN: 'content-in'
+}
+
+// Transition duration in ms
+const TRANSITION_DURATION = 350
+
 function App() {
   const [currentStep, setCurrentStep] = useState(0)
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [showControls, setShowControls] = useState(true)
   const [progress, setProgress] = useState(0)
   const [bgImageKey, setBgImageKey] = useState(0)
+  const [transitionPhase, setTransitionPhase] = useState(TRANSITION_PHASES.IDLE)
+  const [nextStepIndex, setNextStepIndex] = useState(null)
+  const [isTransitioning, setIsTransitioning] = useState(false)
+
+  const contentRef = useRef(null)
+  const transitionTimeoutRef = useRef(null)
 
   const totalSteps = presentationSteps.length
   const step = presentationSteps[currentStep]
@@ -359,25 +373,27 @@ function App() {
   // Keyboard navigation
   useEffect(() => {
     const handleKey = (e) => {
+      if (isTransitioning) return
+
       switch (e.key) {
         case 'ArrowRight':
         case ' ':
         case 'PageDown':
           e.preventDefault()
-          nextStep()
+          handleNextStep()
           break
         case 'ArrowLeft':
         case 'PageUp':
           e.preventDefault()
-          prevStep()
+          handlePrevStep()
           break
         case 'Home':
           e.preventDefault()
-          goToStep(0)
+          handleGoToStep(0)
           break
         case 'End':
           e.preventDefault()
-          goToStep(totalSteps - 1)
+          handleGoToStep(totalSteps - 1)
           break
         case 'f':
         case 'F':
@@ -391,9 +407,9 @@ function App() {
     }
     window.addEventListener('keydown', handleKey)
     return () => window.removeEventListener('keydown', handleKey)
-  }, [currentStep, totalSteps, showControls])
+  }, [isTransitioning, totalSteps, showControls])
 
-  // Progress calculation (based on base slides)
+  // Progress calculation
   useEffect(() => {
     const slideProgress = ((currentSlideIndex + 1) / baseSlides.length) * 100
     setProgress(slideProgress)
@@ -406,17 +422,58 @@ function App() {
     }
   }, [currentImage])
 
-  const nextStep = useCallback(() => {
-    setCurrentStep(prev => Math.min(prev + 1, totalSteps - 1))
-  }, [totalSteps])
+  // Transition sequence handler
+  const runTransition = useCallback((targetStep, direction) => {
+    if (isTransitioning || targetStep === currentStep) return
 
-  const prevStep = useCallback(() => {
-    setCurrentStep(prev => Math.max(prev - 1, 0))
-  }, [])
+    setIsTransitioning(true)
+    setNextStepIndex(targetStep)
 
-  const goToStep = useCallback((index) => {
-    setCurrentStep(Math.max(0, Math.min(index, totalSteps - 1)))
-  }, [totalSteps])
+    // Phase 1: Content flows out (down)
+    setTransitionPhase(TRANSITION_PHASES.CONTENT_OUT)
+
+    transitionTimeoutRef.current = setTimeout(() => {
+      // Phase 2: Image flows out (scale down + fade)
+      setTransitionPhase(TRANSITION_PHASES.IMAGE_OUT)
+
+      transitionTimeoutRef.current = setTimeout(() => {
+        // Phase 3: Switch step, image flows in
+        setCurrentStep(targetStep)
+        setTransitionPhase(TRANSITION_PHASES.IMAGE_IN)
+
+        transitionTimeoutRef.current = setTimeout(() => {
+          // Phase 4: Content flows in (up)
+          setTransitionPhase(TRANSITION_PHASES.CONTENT_IN)
+
+          transitionTimeoutRef.current = setTimeout(() => {
+            // Complete
+            setTransitionPhase(TRANSITION_PHASES.IDLE)
+            setIsTransitioning(false)
+            setNextStepIndex(null)
+          }, TRANSITION_DURATION)
+        }, TRANSITION_DURATION / 2)
+      }, TRANSITION_DURATION)
+    }, TRANSITION_DURATION)
+  }, [currentStep, isTransitioning])
+
+  const handleNextStep = useCallback(() => {
+    if (currentStep < totalSteps - 1) {
+      runTransition(currentStep + 1, 'next')
+    }
+  }, [currentStep, totalSteps, runTransition])
+
+  const handlePrevStep = useCallback(() => {
+    if (currentStep > 0) {
+      runTransition(currentStep - 1, 'prev')
+    }
+  }, [currentStep, runTransition])
+
+  const handleGoToStep = useCallback((index) => {
+    const clamped = Math.max(0, Math.min(index, totalSteps - 1))
+    if (clamped !== currentStep) {
+      runTransition(clamped, clamped > currentStep ? 'next' : 'prev')
+    }
+  }, [currentStep, totalSteps, runTransition])
 
   const toggleFullscreen = useCallback(() => {
     if (!document.fullscreenElement) {
@@ -446,14 +503,30 @@ function App() {
     }
   }, [])
 
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (transitionTimeoutRef.current) {
+        clearTimeout(transitionTimeoutRef.current)
+      }
+    }
+  }, [])
+
+  // Determine which step's content to show during transition
+  const displayStep = transitionPhase === TRANSITION_PHASES.IDLE || transitionPhase === TRANSITION_PHASES.CONTENT_OUT
+    ? step
+    : presentationSteps[nextStepIndex ?? currentStep]
+
+  const displayIsImageStep = displayStep.isImageStep
+  const displayImage = displayStep.image
+
   const renderStepContent = () => {
-    // Image step: show only image with title/subtitle, no content
-    if (isImageStep) {
+    if (displayIsImageStep) {
       return (
         <div className="slide-image-only">
-          <h1>{step.title}</h1>
-          <h2>{step.subtitle}</h2>
-          {step.id === 1 && (
+          <h1>{displayStep.title}</h1>
+          <h2>{displayStep.subtitle}</h2>
+          {displayStep.id === 1 && (
             <div className="credit-line">
               Made by Bablade Legend · From Bablade Studios
             </div>
@@ -463,123 +536,122 @@ function App() {
       )
     }
 
-    // Content step: render based on type
-    switch (step.type) {
+    switch (displayStep.type) {
       case 'title':
         return (
           <div className="slide-title">
-            <h1>{step.title}</h1>
-            <h2>{step.subtitle}</h2>
+            <h1>{displayStep.title}</h1>
+            <h2>{displayStep.subtitle}</h2>
             <div className="credit-line">
               Made by Bablade Legend · From Bablade Studios
             </div>
-            <p className="slide-notes">{step.notes}</p>
+            <p className="slide-notes">{displayStep.notes}</p>
           </div>
         )
       case 'content':
         return (
           <div className="slide-content">
-            <h1>{step.title}</h1>
-            <h2>{step.subtitle}</h2>
+            <h1>{displayStep.title}</h1>
+            <h2>{displayStep.subtitle}</h2>
             <ul>
-              {step.bullets?.map((bullet, i) => (
+              {displayStep.bullets?.map((bullet, i) => (
                 <li key={i}>{bullet}</li>
               ))}
             </ul>
-            <p className="slide-notes">{step.notes}</p>
+            <p className="slide-notes">{displayStep.notes}</p>
           </div>
         )
       case 'grid':
         return (
           <div className="slide-grid">
-            <h1>{step.title}</h1>
-            <h2>{step.subtitle}</h2>
+            <h1>{displayStep.title}</h1>
+            <h2>{displayStep.subtitle}</h2>
             <div className="sectors-grid">
-              {step.sectors?.map((sector, i) => (
+              {displayStep.sectors?.map((sector, i) => (
                 <div key={i} className="sector-card">
                   <span className="sector-icon">{sector.icon}</span>
                   <span className="sector-name">{sector.name}</span>
                 </div>
               ))}
             </div>
-            <p className="slide-notes">{step.notes}</p>
+            <p className="slide-notes">{displayStep.notes}</p>
           </div>
         )
       case 'tools':
         return (
           <div className="slide-tools">
-            <h1>{step.title}</h1>
-            <h2>{step.subtitle}</h2>
+            <h1>{displayStep.title}</h1>
+            <h2>{displayStep.subtitle}</h2>
             <div className="tools-grid">
-              {step.tools?.map((tool, i) => (
+              {displayStep.tools?.map((tool, i) => (
                 <div key={i} className="tool-card">
                   <h3>{tool.name}</h3>
                   <p>{tool.desc}</p>
                 </div>
               ))}
             </div>
-            <p className="slide-notes">{step.notes}</p>
+            <p className="slide-notes">{displayStep.notes}</p>
           </div>
         )
       case 'image-focus':
         return (
           <div className="slide-image-focus">
-            <h1>{step.title}</h1>
-            <h2>{step.subtitle}</h2>
+            <h1>{displayStep.title}</h1>
+            <h2>{displayStep.subtitle}</h2>
             <ul className="labels">
-              {step.labels?.map((label, i) => (
+              {displayStep.labels?.map((label, i) => (
                 <li key={i}>{label}</li>
               ))}
             </ul>
-            <p className="slide-notes">{step.notes}</p>
+            <p className="slide-notes">{displayStep.notes}</p>
           </div>
         )
       case 'demo':
         return (
           <div className="slide-demo">
-            <h1>{step.title}</h1>
-            <h2>{step.subtitle}</h2>
+            <h1>{displayStep.title}</h1>
+            <h2>{displayStep.subtitle}</h2>
             <div className="demo-badge">🎬 LIVE DEMO</div>
-            {step.gestures && (
+            {displayStep.gestures && (
               <ul className="gestures">
-                {step.gestures.map((g, i) => (
+                {displayStep.gestures.map((g, i) => (
                   <li key={i}>
                     <strong>{g.name}</strong> — {g.desc}
                   </li>
                 ))}
               </ul>
             )}
-            {step.steps && (
+            {displayStep.steps && (
               <ol className="steps">
-                {step.steps.map((s, i) => (
+                {displayStep.steps.map((s, i) => (
                   <li key={i}>{s}</li>
                 ))}
               </ol>
             )}
-            {step.bullets && (
+            {displayStep.bullets && (
               <ul>
-                {step.bullets.map((b, i) => (
+                {displayStep.bullets.map((b, i) => (
                   <li key={i}>{b}</li>
                 ))}
               </ul>
             )}
-            <p className="slide-notes">{step.notes}</p>
+            <p className="slide-notes">{displayStep.notes}</p>
           </div>
         )
       case 'recap':
         return (
           <div className="slide-recap">
-            <h1>{step.title}</h1>
-            <h2>{step.subtitle}</h2>
+            <h1>{displayStep.title}</h1>
+            <h2>{displayStep.subtitle}</h2>
             <ol className="takeaways">
-              {step.takeaways?.map((t, i) => (
+              {displayStep.takeaways?.map((t, i) => (
                 <li key={i}>
                   <span className="takeaway-number">{i + 1}</span>
                   {t}
                 </li>
               ))}
             </ol>
-            <p className="slide-notes">{step.notes}</p>
+            <p className="slide-notes">{displayStep.notes}</p>
           </div>
         )
       default:
@@ -587,8 +659,7 @@ function App() {
     }
   }
 
-  // Determine slide number display (1-based for base slides)
-  const displaySlideNumber = step.id
+  const displaySlideNumber = displayStep.id
   const totalSlides = baseSlides.length
 
   return (
@@ -600,37 +671,43 @@ function App() {
 
       {/* Slide container */}
       <div className="slide-container">
-        {/* Background image - only show if step has image */}
-        {step.image && (
-          <div
-            key={bgImageKey}
-            className={`slide-bg ${isImageStep ? 'image-step' : 'content-step'}`}
-            style={{ backgroundImage: `url(${step.image})` }}
-            aria-hidden="true"
-          />
-        )}
+        {/* Background image layer */}
+        <div className="bg-layer">
+          {displayImage && (
+            <div
+              key={bgImageKey}
+              className={`slide-bg ${displayIsImageStep ? 'image-step' : 'content-step'}`}
+              style={{ backgroundImage: `url(${displayImage})` }}
+              aria-hidden="true"
+            />
+          )}
+        </div>
 
         {/* Slide content */}
         <div className="slide-wrapper">
-          <div key={currentStep} className="slide-content-wrapper">
+          <div
+            key={currentStep}
+            className={`slide-content-wrapper ${transitionPhase}`}
+            ref={contentRef}
+          >
             {renderStepContent()}
           </div>
 
           {/* Slide number */}
-          <div className="slide-number" aria-label={`Slide ${displaySlideNumber} of ${totalSlides}${isImageStep ? ' (image)' : ''}`}>
+          <div className="slide-number" aria-label={`Slide ${displaySlideNumber} of ${totalSlides}${displayIsImageStep ? ' (image)' : ''}`}>
             {displaySlideNumber} / {totalSlides}
-            {isImageStep && <span className="phase-indicator">📷</span>}
+            {displayIsImageStep && <span className="phase-indicator">📷</span>}
           </div>
         </div>
       </div>
 
-      {/* Bottom-left controls */}
+      {/* Bottom-left controls - FIXED POSITION, never moves */}
       <div className={`controls ${showControls ? 'visible' : 'hidden'}`} role="navigation" aria-label="Presentation controls">
         <div className="controls-inner">
           <button
             className="control-btn"
-            onClick={() => goToStep(0)}
-            disabled={currentStep === 0}
+            onClick={() => handleGoToStep(0)}
+            disabled={currentStep === 0 || isTransitioning}
             aria-label="First slide (Home)"
             title="First Slide (Home)"
           >
@@ -642,8 +719,8 @@ function App() {
 
           <button
             className="control-btn"
-            onClick={prevStep}
-            disabled={currentStep === 0}
+            onClick={handlePrevStep}
+            disabled={currentStep === 0 || isTransitioning}
             aria-label="Previous step (Left arrow)"
             title="Previous (←)"
           >
@@ -656,13 +733,13 @@ function App() {
             <span className="current">{displaySlideNumber}</span>
             <span className="separator">/</span>
             <span className="total">{totalSlides}</span>
-            {isImageStep && <span className="phase-badge">IMG</span>}
+            {displayIsImageStep && <span className="phase-badge">IMG</span>}
           </div>
 
           <button
             className="control-btn"
-            onClick={nextStep}
-            disabled={currentStep === totalSteps - 1}
+            onClick={handleNextStep}
+            disabled={currentStep === totalSteps - 1 || isTransitioning}
             aria-label="Next step (Right arrow)"
             title="Next (→)"
           >
@@ -673,8 +750,8 @@ function App() {
 
           <button
             className="control-btn"
-            onClick={() => goToStep(totalSteps - 1)}
-            disabled={currentStep === totalSteps - 1}
+            onClick={() => handleGoToStep(totalSteps - 1)}
+            disabled={currentStep === totalSteps - 1 || isTransitioning}
             aria-label="Last slide (End)"
             title="Last Slide (End)"
           >
@@ -687,6 +764,7 @@ function App() {
           <button
             className="control-btn fullscreen-btn"
             onClick={toggleFullscreen}
+            disabled={isTransitioning}
             aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
             title={isFullscreen ? 'Exit Fullscreen (F)' : 'Fullscreen (F)'}
           >
