@@ -22,7 +22,7 @@ import internetEmailImg from '/web browser search email internet connection diag
 // Tools grid - generated from icons since no image
 import iconsSvg from '/icons.svg'
 
-// Define base slide data
+// Define base slide data - 19 slides matching IMAGE_SEARCH_LIST.md exactly (13 unique images)
 const baseSlides = [
   {
     id: 1,
@@ -39,15 +39,15 @@ const baseSlides = [
     type: 'content',
     image: ictDefinitionImg,
     bullets: [
-      'ICT = Tools that help us create, share, store & manage information',
-      'Combines computing, telecommunications, and media',
-      'Powers everything from smartphones to satellite networks'
+      'ICT = Using technology (computers, phones, internet) to access & share information',
+      'Tools that help create, share, store, and manage information',
+      'Everywhere: classrooms, hospitals, homes, government offices'
     ],
-    notes: 'ICT isn\'t just computers — it\'s the entire ecosystem of digital communication.'
+    notes: 'ICT helps us connect, learn, work, shop, and live smarter.'
   },
   {
     id: 3,
-    title: 'ICT in Your Daily Life',
+    title: 'ICT in Daily Life',
     subtitle: 'You\'re already using it every day',
     type: 'content',
     image: ictDailyLifeImg,
@@ -56,14 +56,14 @@ const baseSlides = [
       '📺 YouTube — Video streaming',
       '💳 PhonePe — Digital payments',
       '📚 Kindle — E-reading',
-      '🗺️ Maps — Navigation',
+      '🗺️ Maps — GPS navigation',
       '📧 Gmail — Email'
     ],
-    notes: 'Ask the class: Which of these did you use today?'
+    notes: 'Ask the class: Which of these did you use today? Over 5 billion people use the internet!'
   },
   {
     id: 4,
-    title: 'Where ICT Lives — 9 Sectors',
+    title: 'ICT Across 9 Sectors',
     subtitle: 'From farms to hospitals, ICT is everywhere',
     type: 'grid',
     image: sectorsOverviewImg,
@@ -78,7 +78,7 @@ const baseSlides = [
       { name: 'Beauty', icon: '💄' },
       { name: 'Apparel', icon: '👗' }
     ],
-    notes: 'Quick tour — each sector uses ICT differently but the core tools are the same.'
+    notes: 'Each sector uses ICT differently but core tools are the same.'
   },
   {
     id: 5,
@@ -87,11 +87,11 @@ const baseSlides = [
     type: 'content',
     image: sectorsWorkBankImg,
     bullets: [
-      'Workplace: Cloud docs, video calls, project management',
-      'Banking: Mobile apps, UPI, digital wallets, cybersecurity',
-      'Both rely on: Cloud computing, encryption, real-time sync'
+      'Workplace: Document creation, data management, online communication',
+      'Banking: Digital banking, mobile payments, online transactions, security',
+      'Both: Cloud computing, encryption, real-time sync'
     ],
-    notes: 'Show how your college uses ICT — LMS, online fees, digital library.'
+    notes: 'College uses: LMS, online fees, digital library.'
   },
   {
     id: 6,
@@ -100,9 +100,9 @@ const baseSlides = [
     type: 'content',
     image: sectorsAgriLogisticsImg,
     bullets: [
-      'Agriculture: Weather apps, soil sensors, drone monitoring, market prices',
-      'Logistics: GPS tracking, route optimization, warehouse automation',
-      'Both use: IoT sensors, mobile networks, data analytics'
+      'Agriculture: Weather forecasts, crop management, automation, research',
+      'Logistics: Shipment tracking, route optimization, real-time updates',
+      'Both: IoT sensors, mobile networks, data analytics'
     ],
     notes: 'Farmer checks mandi prices on phone; delivery tracked in real-time.'
   },
@@ -113,9 +113,9 @@ const baseSlides = [
     type: 'content',
     image: sectorsHealthHomeImg,
     bullets: [
-      'Healthcare: Video consultations, EHR, health apps, wearable trackers',
-      'Home: Smart lights, voice assistants, security cams, streaming',
-      'Both use: Cloud, AI, mobile apps, wireless networks'
+      'Healthcare: Telemedicine, electronic records, health/fitness apps',
+      'Home: Family connection, streaming, smart device control',
+      'Both: Cloud, AI, mobile apps, wireless networks'
     ],
     notes: 'Grandma\'s video call with doctor; lights turn on as you enter.'
   },
@@ -126,42 +126,42 @@ const baseSlides = [
     type: 'content',
     image: sectorsRetailBeautyImg,
     bullets: [
-      'Retail: E-commerce, inventory systems, digital payments',
-      'Beauty: AR virtual try-on, appointment apps, skin analysis',
-      'Apparel: Virtual fitting rooms, 3D design, social commerce'
+      'Retail: Online platforms, inventory management, digital payments',
+      'Beauty: Virtual try-ons, online consultations, fitness apps',
+      'Apparel: Virtual fitting rooms, digital design, social media marketing'
     ],
     notes: 'Try on sunglasses via phone camera; see how jeans fit without trying.'
   },
   {
     id: 9,
-    title: 'ICT Tools You Already Use',
+    title: 'ICT Tools',
     subtitle: 'The essential toolkit',
     type: 'tools',
     image: null,
     tools: [
-      { name: 'Smartphone', desc: 'Calls, apps, internet, GPS, camera' },
-      { name: 'Tablet', desc: 'Reading, drawing, presentations, media' },
-      { name: 'Radio', desc: 'Broadcast audio — news, music, education' },
-      { name: 'TV', desc: 'Video broadcast, smart apps, streaming' },
-      { name: 'Apps', desc: 'Specialized tools for every task' }
+      { name: 'Smartphone', desc: 'Calls, messages, internet, apps, GPS, camera' },
+      { name: 'Tablet', desc: 'Reading, browsing, drawing, presentations' },
+      { name: 'Radio', desc: 'Broadcast news, music, education via sound' },
+      { name: 'TV', desc: 'Sound + visuals for learning & entertainment' },
+      { name: 'Apps', desc: 'Messaging, banking, studying, specialized tools' }
     ],
-    notes: 'Hold up your phone — it\'s all five tools in one device.'
+    notes: 'Default smartphone apps: Phone, Camera, Calendar, Mail, Photos, Clock, Maps, Messages. Your phone = all 5 tools in one!'
   },
   {
     id: 10,
     title: 'Smartphone Anatomy',
-    subtitle: 'Every part has a purpose',
+    subtitle: 'A handheld mini-computer',
     type: 'image-focus',
     image: smartphonePartsImg,
     labels: [
-      'Microphone — Voice input',
-      'Earpiece — Call audio output',
-      'Volume Buttons — Sound control',
-      'Power Button — On/Off, sleep/wake',
-      'Touch Screen — Primary input',
-      'Back / Home / Recent — Navigation'
+      'Microphone — Captures voice during calls',
+      'Earpiece — Hear the other person',
+      'Volume Buttons — Increase/decrease sound',
+      'Power Button — Turn on/off',
+      'Touch Screen — Tap/swipe to control',
+      'Back / Home / Recent — Navigation buttons'
     ],
-    notes: 'Point to each part on your actual phone as you explain.'
+    notes: 'Point to each part on your actual phone. Smartphone = mini computer in your pocket.'
   },
   {
     id: 11,
@@ -170,28 +170,28 @@ const baseSlides = [
     type: 'demo',
     image: gesturesImg,
     gestures: [
-      { name: 'Tap', desc: 'Select / Open' },
-      { name: 'Tap & Hold', desc: 'More options / Context menu' },
-      { name: 'Drag', desc: 'Move items / Scroll slowly' },
-      { name: 'Swipe', desc: 'Navigate pages / Dismiss' },
+      { name: 'Tap', desc: 'Select or open' },
+      { name: 'Tap & Hold', desc: 'More options / context menu' },
+      { name: 'Drag', desc: 'Move items / scroll slowly' },
+      { name: 'Swipe', desc: 'Navigate pages / dismiss' },
       { name: 'Double Tap', desc: 'Zoom in/out' },
       { name: 'Pinch', desc: 'Zoom in/out (two fingers)' }
     ],
-    notes: 'DEMO TIME: Project your phone and demonstrate each gesture live.'
+    notes: 'DEMO: Project your phone and demonstrate each gesture live.'
   },
   {
     id: 12,
-    title: 'How Computers Work — The IPO Cycle',
-    subtitle: 'Input → Process → Output (+ Storage)',
+    title: 'Computer = IPO Cycle',
+    subtitle: 'Input → Process → Output (with Storage)',
     type: 'image-focus',
     image: ipoCycleImg,
     labels: [
-      'Input — Keyboard, mouse, mic, scanner',
-      'Process — CPU (CU + ALU + MU)',
-      'Output — Monitor, printer, speaker',
-      'Storage — RAM (temp) / SSD/HDD (perm)'
+      'Input Devices — Keyboard, mouse, scanner, webcam, mic, barcode',
+      'CPU (Brain) — Control Unit | ALU | Memory Unit',
+      'Output Devices — Monitor, printer, speakers, projector',
+      'Storage — Temporary (RAM) & Permanent (SSD/HDD/USB/Cloud)'
     ],
-    notes: 'Everything a computer does follows this cycle. Every app, every click.'
+    notes: 'Everything a computer does follows this cycle. Speed measured in GHz.'
   },
   {
     id: 13,
@@ -200,12 +200,12 @@ const baseSlides = [
     type: 'content',
     image: ipoCycleImg,
     bullets: [
-      'Control Unit (CU) — Directs traffic, fetches instructions',
-      'Arithmetic Logic Unit (ALU) — Math + logic (add, compare, AND/OR)',
-      'Memory Unit (MU) — Temporary holding area during processing',
-      'Speed measured in GHz (billions of cycles/second)'
+      'Control Unit (CU) — Directs data flow, tells parts what to do',
+      'Arithmetic Logic Unit (ALU) — All math & logic operations',
+      'Memory Unit (MU) — Temporary storage during processing',
+      'Speed: GHz (billions of cycles/second)'
     ],
-    notes: 'Same CPU architecture in your phone, laptop, and game console.'
+    notes: 'Same CPU architecture in phone, laptop, game console. Same IPO image — content changes only.'
   },
   {
     id: 14,
@@ -214,55 +214,53 @@ const baseSlides = [
     type: 'image-focus',
     image: ioDevicesImg,
     labels: [
-      'INPUT: Keyboard, Mouse, Scanner, Webcam, Mic, Barcode Reader',
-      'OUTPUT: Monitor, Printer, Speakers, Projector, Plotter'
+      'INPUT: Keyboard, Mouse, Scanner, Stylus, Webcam, Mic, Barcode Reader',
+      'OUTPUT: Monitor, Printer, Speakers, Projector, Plotter',
+      'Mouse Actions: Hover, Left-click, Double-click, Right-click, Drag-drop'
     ],
     notes: 'Class activity: Name each icon — is it input or output?'
   },
   {
     id: 15,
-    title: 'Memory & Storage Hierarchy',
+    title: 'Memory Hierarchy',
     subtitle: 'Speed vs Capacity vs Cost',
     type: 'image-focus',
     image: memoryStorageImg,
     labels: [
-      'Registers (CPU) — Fastest, tiny, expensive',
-      'Cache (L1/L2/L3) — Ultra-fast, small',
-      'RAM — Fast, volatile, working memory',
-      'SSD/HDD — Permanent, large, slower',
-      'USB/SD — Portable, removable',
+      'Primary: RAM (temp, fast, erased on shutdown) | ROM (perm, BIOS, non-volatile)',
+      'Secondary: HDD (500GB–1TB+) | SSD (faster) | USB (4GB–1TB) | SD Card | Optical (CD/DVD)',
       'Cloud — Infinite, network-dependent'
     ],
-    notes: 'Analogy: Registers = pocket, RAM = desk, SSD = filing cabinet, Cloud = warehouse.'
+    notes: 'Analogy: Registers=pocket, RAM=desk, SSD=filing cabinet, Cloud=warehouse.'
   },
   {
     id: 16,
-    title: 'Motherboard & Ports — Connect Everything',
-    subtitle: 'The highways inside your computer',
+    title: 'Motherboard & Ports',
+    subtitle: 'Main circuit board connecting everything',
     type: 'image-focus',
     image: motherboardPortsImg,
     labels: [
-      'USB-C / USB-A — Data, power, video (most versatile)',
-      'HDMI — High-def video + audio to monitor/TV',
-      'Ethernet — Wired internet (fast, stable)',
-      '3.5mm Audio — Headphones, mic, speakers',
-      'Power — Barrel or USB-C PD charging'
+      'USB Port (Type-A, Type-C) — Keyboard, mouse, printer, pen drive',
+      'Display Port (VGA, HDMI) — Monitor/projector, HDMI = HD video+sound',
+      'Audio Ports — Mic input, Line Out (speakers/headphones)',
+      'Ethernet Port — Wired high-speed internet (LAN cable)',
+      'Power Port — Round or USB-C PD charging'
     ],
     notes: 'Show real cables. USB-C does it all — data, video, power.'
   },
   {
     id: 17,
     title: 'Files & Folders — Digital Organization',
-    subtitle: 'Chocolate → Wrapper → Box = Data → File → Folder',
+    subtitle: 'Data → File → Folder (Chocolate → Wrapper → Box)',
     type: 'demo',
     image: filesFoldersImg,
     steps: [
-      'Right-click desktop → New → Folder → Name it',
-      'Open folder → Right-click → New → Text Document',
-      'Name file → Double-click → Type → Ctrl+S to save',
-      'Subfolders: Folder inside folder (Class 3 → Section A → Students.txt)'
+      'File = Data + Name + Extension (.txt, .jpg, .mp3, .xls)',
+      'Create: Right-click → New → Text Document → Name → Enter',
+      'Save: File → Save (Ctrl+S) | Save As = Copy with new name',
+      'Folder: Right-click → New → Folder | Subfolder = Folder inside folder'
     ],
-    notes: 'LIVE DEMO: Create a folder and file on the projector right now.'
+    notes: 'LIVE DEMO: Create folder "Class 3" → Subfolder "Section-A" → File "Students_A.txt". No two files with same name in one folder!'
   },
   {
     id: 18,
@@ -272,7 +270,7 @@ const baseSlides = [
     image: internetEmailImg,
     bullets: [
       'Browser: Chrome/Edge/Firefox — URL bar, tabs, bookmarks, extensions',
-      'Internet: Network of networks — ISP → Modem → Router → You',
+      'Internet: Network of networks — Device → Modem → ISP → Internet',
       'Web: Websites on the Internet — URLs, hyperlinks, search engines',
       'Email: Digital mail — name@domain.com, instant, free, global'
     ],
@@ -285,13 +283,13 @@ const baseSlides = [
     type: 'recap',
     image: heroImg,
     takeaways: [
-      'ICT = Info + Comm + Tech — powers every sector',
-      'Smartphone = Computer in your pocket (IPO cycle applies)',
-      'Touch gestures = Universal language of mobile',
-      'Files/Folders = Digital organization (chocolate box analogy)',
-      'Browser + Search + Email = Your daily digital toolkit'
+      'ICT = Info + Comm + Tech — powers every sector (9 sectors)',
+      'Smartphone = Mini computer (Parts, Features, Gestures, Home screen)',
+      'Computer = IPO Cycle (Input→Process→Output) + CPU(CU+ALU+MU) + Memory(RAM/ROM/Storage)',
+      'Files/Folders = Digital organization (Chocolate→Wrapper→Box analogy)',
+      'Browser + Search + Email = Your daily digital toolkit (Gmail setup, netiquette)'
     ],
-    notes: 'Great job! Questions? Practice: Create a folder, save a file, send an email.'
+    notes: 'Great job! Practice: Create folder, save file, send email. Questions?'
   }
 ]
 
